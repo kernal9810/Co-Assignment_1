@@ -1,0 +1,28 @@
+from BinAsmLegend import Legend
+
+class ExecuteEngine:
+    def Ex_typeA(self,ins):
+        r = Legend.getRegister(ins[7:10])
+        b = int(Legend.getRegister(ins[10:13]))
+        c = int(Legend.getRegister(ins[13:16]))
+
+        op = Legend.getOp(ins[:5])
+
+        if(op == "mul"):
+            Legend.setRegister(r, format(int(b*c,2),"16b"))
+        elif (op == "add"):
+            Legend.setRegister(r,format(int(b + c, 2),"16b"))
+        elif (op == "sub"):
+            Legend.setRegister(r, format(int(b - c, 2), "16b"))
+        elif (op == "xor"):
+            Legend.setRegister(r,format(int(b^c,2),"16b"))
+        elif (op == "and"):
+            Legend.setRegister(r, format(int(b and c, 2), "16b"))
+        elif (op == "or"):
+            Legend.setRegister(r, format(int(b or c, 2),"16b"))
+
+    def Ex_typeB:
+    def Ex_typeC:
+    def Ex_typeD:
+    def Ex_typeE:
+    def Ex_typeF:

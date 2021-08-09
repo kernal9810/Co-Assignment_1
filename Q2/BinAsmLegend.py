@@ -22,7 +22,10 @@ class Legend:
         Legend.registers[register_bin] = register_val
 
     def getType(self, s):
-        return Legend.function["s"][1]
+        return Legend.function[s][1]
+
+    def getOp(self,s):
+        return Legend.registers[s][0]
 
 
 
