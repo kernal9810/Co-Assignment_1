@@ -4,6 +4,17 @@ from BinAsmLegend import Legend
 class ExecuteEngine:
 
     @staticmethod
+    def checkOverflow(x):
+        flag = Legend.getRegister("111")
+        if x > 65535:
+            flag = flag[:12] + "1" + flag[13:16]
+        else:
+            flag = flag[:12] + "0" + flag[13:16]
+
+        Legend.setRegister("111",flag)
+
+
+    @staticmethod
     def Ex_typeA(ins):
         r = Legend.getRegister(ins[7:10])
         b = int(Legend.getRegister(ins[10:13]))
@@ -13,16 +24,25 @@ class ExecuteEngine:
 
         if   op == "mul":
             Legend.setRegister(r, format(int(b*c,2),"16b"))
+            ExecuteEngine.checkOverflow(b*c)
+
         elif op == "add":
             Legend.setRegister(r,format(int(b + c, 2),"16b"))
+            ExecuteEngine.checkOverflow(b+c)
+
         elif op == "sub":
             Legend.setRegister(r, format(int(b - c, 2), "16b"))
+            ExecuteEngine.checkOverflow(b - c)
+
         elif op == "xor":
             Legend.setRegister(r,format(int(b^c,2),"16b"))
+
         elif op == "and":
             Legend.setRegister(r, format(int(b and c, 2), "16b"))
+
         elif op == "or":
             Legend.setRegister(r, format(int(b or c, 2),"16b"))
+
 
     @staticmethod
     def Ex_typeB(ins):
@@ -70,11 +90,11 @@ class ExecuteEngine:
 
             Legend.setRegister("111", flag)
 
-    @staticmethod
-    def Ex_typeD(ins):
-        
-    @staticmethod
-    def Ex_typeE(ins):
 
-    @staticmethod
-    def Ex_typeF(ins):
+    # @staticmethod
+    # def Ex_typeD(ins):
+    #
+    #
+    # @staticmethod
+    # def Ex_typeE(ins):
+

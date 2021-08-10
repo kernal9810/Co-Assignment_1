@@ -24,19 +24,23 @@ def main():
 
 def executeLine(ins, pc):
 
-    halt = True
+    halt = False
     pc += 1
     type = Legend.getType(ins[:5])
     if type == "A":
         ExecuteEngine.Ex_typeA(ins)
+        pc += 1
     elif type == "B":
         ExecuteEngine.Ex_typeB(ins)
+        pc += 1
     elif type == "C":
         ExecuteEngine.Ex_typeC(ins)
+        pc += 1
     elif type == "D":
-        ExecuteEngine.Ex_typeD(ins)
+        pc = ExecuteEngine.Ex_typeD(ins, pc)
     elif type == "E":
-        ExecuteEngine.Ex_typeE(ins)
+        pc = ExecuteEngine.Ex_typeE(ins, pc)
     elif type == "F":
-        ExecuteEngine.Ex_typeF(ins)
+        halt = True
+        pc = 0
     return halt, pc
