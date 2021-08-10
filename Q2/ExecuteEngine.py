@@ -1,7 +1,10 @@
 from BinAsmLegend import Legend
 
+
 class ExecuteEngine:
-    def Ex_typeA(self,ins):
+
+    @staticmethod
+    def Ex_typeA(ins):
         r = Legend.getRegister(ins[7:10])
         b = int(Legend.getRegister(ins[10:13]))
         c = int(Legend.getRegister(ins[13:16]))
@@ -21,7 +24,8 @@ class ExecuteEngine:
         elif op == "or":
             Legend.setRegister(r, format(int(b or c, 2),"16b"))
 
-    def Ex_typeB(self,ins):
+    @staticmethod
+    def Ex_typeB(ins):
         r = Legend.getRegister(ins[5:8])
         b = int(Legend.getRegister(ins[8:16]))
 
@@ -34,7 +38,8 @@ class ExecuteEngine:
             Legend.setRegister(r, format(int(b>>1 , 2), "16b"))
 
 
-    def Ex_typeC(self,ins):
+    @staticmethod
+    def Ex_typeC(ins):
         r = Legend.getRegister(ins[10:13])
         b = int(Legend.getRegister(ins[13:16]))
 
@@ -48,8 +53,28 @@ class ExecuteEngine:
 
         elif op == "inv":
             Legend.setRegister(r, format(int(~b, 2), "16b"))
+
         elif op == "cmp":
-            
-    def Ex_typeD:
-    def Ex_typeE:
-    def Ex_typeF:
+            flag = Legend.getRegister("111")
+            fl = 0
+            fe = 0
+            fg = 0
+
+            if int(r) > b:
+                fg = 1
+            elif int(r) < b:
+                fl = 1
+            else:
+                fe = 1
+            flag = flag[:13] + str(fl) + str(fg) + str(fe)
+
+            Legend.setRegister("111", flag)
+
+    @staticmethod
+    def Ex_typeD(ins):
+        
+    @staticmethod
+    def Ex_typeE(ins):
+
+    @staticmethod
+    def Ex_typeF(ins):

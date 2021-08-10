@@ -12,19 +12,42 @@ class Legend:
     }
 
     function = {
-        "00010":["mul","A"]
+        "00000": ["add", "A"],
+        "00001": ["sub", "A"],
+        "00010": ["mov_im", "B"],
+        "00011": ["mov", "C"],
+        "00100": ["ld", "D"],
+        "00101": ["st", "D"],
+        "00110": ["mul", "A"],
+        "00111": ["div", "C"],
+        "01000": ["Rshift", "B"],
+        "01001": ["Lshift", "B"],
+        "01010": ["xor", "A"],
+        "01011": ["or", "A"],
+        "01100": ["and", "A"],
+        "01101": ["not", "C"],
+        "01110": ["cmp", "C"],
+        "01111": ["jmp", "E"],
+        "10000": ["jlt", "E"],
+        "10001": ["jgt", "E"],
+        "10010": ["je", "E"],
+        "10011": ["hlt", "F"]
     }
 
-    def getRegister(self, register_bin):
+    @staticmethod
+    def getRegister(register_bin):
         return Legend.registers[register_bin]
 
-    def setRegister(self,register_bin, register_val):
+    @staticmethod
+    def setRegister(register_bin, register_val):
         Legend.registers[register_bin] = register_val
 
-    def getType(self, s):
+    @staticmethod
+    def getType(s):
         return Legend.function[s][1]
 
-    def getOp(self,s):
+    @staticmethod
+    def getOp(s):
         return Legend.registers[s][0]
 
 
