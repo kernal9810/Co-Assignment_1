@@ -1,5 +1,5 @@
 from .BinAsmLegend import Legend
-
+from ExecuteEngine import ExecuteEngine
 Mem = open("../TextFiles/BinaryCompilation.txt", "r")
 
 OutputTxt = open("../TextFiles/Output.txt.txt", "a")
@@ -23,7 +23,20 @@ def main():
 
 
 def executeLine(ins, pc):
-    halt = True
-    Legend.getType(ins[:5])
 
+    halt = True
+    pc += 1
+    type = Legend.getType(ins[:5])
+    if type == "A":
+        ExecuteEngine.Ex_typeA(ins)
+    elif type == "B":
+        ExecuteEngine.Ex_typeB(ins)
+    elif type == "C":
+        ExecuteEngine.Ex_typeC(ins)
+    elif type == "D":
+        ExecuteEngine.Ex_typeD(ins)
+    elif type == "E":
+        ExecuteEngine.Ex_typeE(ins)
+    elif type == "F":
+        ExecuteEngine.Ex_typeF(ins)
     return halt, pc
