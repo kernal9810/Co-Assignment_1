@@ -1,24 +1,26 @@
 from .BinAsmLegend import Legend
 from ExecuteEngine import ExecuteEngine
-Mem = open("../TextFiles/BinaryCompilation.txt", "r")
+Input = open("../TextFiles/BinaryCompilation.txt", "r")
 
-OutputTxt = open("../TextFiles/Output.txt.txt", "a")
+OutputTxt = open("../TextFiles/Output.txt", "a")
 
 
 def main():
 
     halt = False
     pc = 0
+    Mem = Input.readlines()
+
     while not halt:
-        line = Mem.readline()
-        if not line:
-            break
+        line = Mem[pc]
 
         halt, new_pc = executeLine(line, pc)
 
         OutputTxt.write(format(pc, "08b") + " " + Legend.registers["000"] + Legend.registers["001"] + Legend.registers["010"] +
                Legend.registers["011"] + Legend.registers["100"] + Legend.registers["101"] + Legend.registers["110"] +
                Legend.registers["111"] + "\n")
+
+        pc = new_pc
 
 
 

@@ -11,68 +11,73 @@ class ExecuteEngine:
         else:
             flag = flag[:12] + "0" + flag[13:16]
 
-        Legend.setRegister("111",flag)
-
+        Legend.setRegister("111", flag)
 
     @staticmethod
     def Ex_typeA(ins):
-        r = Legend.getRegister(ins[7:10])
+
+        r = ins[7:10]
         b = int(Legend.getRegister(ins[10:13]))
         c = int(Legend.getRegister(ins[13:16]))
 
         op = Legend.getOp(ins[:5])
 
-        if   op == "mul":
-            Legend.setRegister(r, format(int(b*c,2),"16b"))
-            ExecuteEngine.checkOverflow(b*c)
+        if op == "mul":
+            Legend.setRegister(r, format(int(b * c), "16b"))
+            ExecuteEngine.checkOverflow(b * c)
 
         elif op == "add":
-            Legend.setRegister(r,format(int(b + c, 2),"16b"))
-            ExecuteEngine.checkOverflow(b+c)
+            Legend.setRegister(r, format(int(b + c), "16b"))
+            ExecuteEngine.checkOverflow(b + c)
 
         elif op == "sub":
-            Legend.setRegister(r, format(int(b - c, 2), "16b"))
+            Legend.setRegister(r, format(int(b - c), "16b"))
             ExecuteEngine.checkOverflow(b - c)
 
         elif op == "xor":
-            Legend.setRegister(r,format(int(b^c,2),"16b"))
+            Legend.setRegister(r, format(int(b ^ c), "16b"))
 
         elif op == "and":
-            Legend.setRegister(r, format(int(b and c, 2), "16b"))
+            Legend.setRegister(r, format(int(b and c), "16b"))
 
         elif op == "or":
-            Legend.setRegister(r, format(int(b or c, 2),"16b"))
-
+            Legend.setRegister(r, format(int(b or c), "16b"))
 
     @staticmethod
     def Ex_typeB(ins):
-        r = Legend.getRegister(ins[5:8])
+        r = ins[5:8]
         b = int(Legend.getRegister(ins[8:16]))
 
         op = Legend.getOp(ins[:5])
         if op == "mov_im":
-            Legend.setRegister(r,format(int(b,2), "16b"))
+            Legend.setRegister(r, format(int(b), "16b"))
         elif op == "Lshift":
-            Legend.setRegister(r, format(int(b<<1 , 2), "16b"))
+            Legend.setRegister(r, format(int(b << 1), "16b"))
         elif op == "Rshift":
-            Legend.setRegister(r, format(int(b>>1 , 2), "16b"))
-
+            Legend.setRegister(r, format(int(b >> 1), "16b"))
 
     @staticmethod
     def Ex_typeC(ins):
-        r = Legend.getRegister(ins[10:13])
-        b = int(Legend.getRegister(ins[13:16]))
+        r = ins[10:13]
+        r_1 = Legend.getRegister(r)
+        r_2 = Legend.getRegister(ins[13:16])
+
+        b = int(r_2)
 
         op = Legend.getOp(ins[:5])
-        if op == "div":
-            q = int(int(r)/b)
-            rem = int(r)%b
 
-            Legend.setRegister(Legend.getRegister("000"), format(int(q, 2), "16b"))
-            Legend.setRegister(Legend.getRegister("001"), format(int(rem, 2), "16b"))
+        if op == "mov":
+            Legend.setRegister(r, r_2)
+
+        elif op == "div":
+            q = int(int(r_1) / b)
+            rem = int(r_1) % b
+
+            Legend.setRegister("000", format(int(q), "16b"))
+            Legend.setRegister("001", format(int(rem), "16b"))
 
         elif op == "inv":
-            Legend.setRegister(r, format(int(~b, 2), "16b"))
+            Legend.setRegister(r, format(int(~b), "16b"))
 
         elif op == "cmp":
             flag = Legend.getRegister("111")
@@ -80,9 +85,9 @@ class ExecuteEngine:
             fe = 0
             fg = 0
 
-            if int(r) > b:
+            if int(r_1) > b:
                 fg = 1
-            elif int(r) < b:
+            elif int(r_1) < b:
                 fl = 1
             else:
                 fe = 1
@@ -90,11 +95,60 @@ class ExecuteEngine:
 
             Legend.setRegister("111", flag)
 
+    @staticmethod
+    def Ex_typeD(ins, pc):
 
-    # @staticmethod
-    # def Ex_typeD(ins):
-    #
-    #
-    # @staticmethod
-    # def Ex_typeE(ins):
+        r = ins[5:8]
+        op = Legend.getOp(ins[:5])
+        address = int(ins[8:])
 
+        if op == "st":
+            file = open("../TextFiles/BinaryCompilation.txt", "a")
+            r = Legend.getRegister(ins[5:8])
+
+
+        if op == "ld":
+            file = open("../TextFiles/BinaryCompilation.txt", "r")
+            mem = file.readlines()
+            Legend.setRegister(r, mem[address])
+
+
+    @staticmethod
+    def Ex_typeE(ins, pc):
+
+        flag = Legend.getRegister("111")
+        fl = flag[13]
+        fg = flag[14]
+        fe = flag[15]
+
+        op = Legend.getOp(ins[:5])
+
+        mem_adr = ins[8:16]
+
+        if op == "jmp":
+            pc = int(mem_adr)
+            return pc
+
+        elif op == "jlt":
+            if fl == "1":
+                pc = int(mem_adr)
+                return pc
+            else:
+                pc += 1
+                return pc
+
+        elif op == "jgt":
+            if fg == "1":
+                pc = int(mem_adr)
+                return pc
+            else:
+                pc += 1
+                return pc
+
+        elif op == "je":
+            if fe == "1":
+                pc = int(mem_adr)
+                return pc
+            else:
+                pc += 1
+                return pc
