@@ -1,6 +1,8 @@
+import sys
+
 from .BinAsmLegend import Legend
 from ExecuteEngine import ExecuteEngine
-Input = open("../TextFiles/BinaryCompilation.txt", "r")
+Input = open("../TextFiles/Input.txt", "r")
 
 OutputTxt = open("../TextFiles/Output.txt", "a")
 
