@@ -1,5 +1,0 @@
-var x
-var y
-Tanish: mov R1 R2
-je Tanish
-hlt
