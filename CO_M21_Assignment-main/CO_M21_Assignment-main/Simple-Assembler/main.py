@@ -1,3 +1,6 @@
+import sys
+
+
 def regcheck(x, str2, line, i):
     global errorName
     global error
@@ -16,10 +19,10 @@ def regcheck(x, str2, line, i):
     elif x[i] == 'R6':
         str2 = str2 + '110'
     elif x[i] == 'FLAGS' or x[i] == 'R7':
-        errorName = errorName + 'Illegal use of FLAGS ( LINE ' + str(line) + ')'
+        errorName = 'Illegal use of FLAGS ( LINE ' + str(line) + ')'
         error += 1
     else:
-        errorName = errorName + 'Typo in register name ( LINE ' + str(line) + ')'
+        errorName = 'Typo in register name ( LINE ' + str(line) + ')'
         error += 1
     return str2
 
@@ -30,7 +33,7 @@ def A(x, line):
     global outputList
     str1 = ''
     if x[0] == 'add':
-        str1 = str1+'0000000'
+        str1 = str1 + '0000000'
     elif x[0] == 'sub':
         str1 = str1 + '0000100'
     elif x[0] == 'mul':
@@ -46,7 +49,7 @@ def A(x, line):
         if error == 0:
             str1 = regcheck(x, str1, line, i)
 
-    outputList.append(str)
+    outputList.append(str1)
 
 
 def B(x, line):
@@ -68,12 +71,12 @@ def B(x, line):
         if value >= 0 and value <= 255:
             str1 = str1 + format(value, '08b')
         else:
-            errorName = errorName+'Illegal immediate values ( LINE ' + str(line) + ')'
+            errorName = 'Illegal immediate values ( LINE ' + str(line) + ')'
             error += 1
     else:
-        errorName = errorName + 'Illegal immediate values ( LINE ' + str(line) + ')'
+        errorName = 'Illegal immediate values ( LINE ' + str(line) + ')'
         error += 1
-    outputList.append(str)
+    outputList.append(str1)
 
 
 def C(x, line):
@@ -109,12 +112,12 @@ def C(x, line):
             elif x[0] == 'mov' and i == 2 and (x[i] == 'FLAGS' or x[i] == 'R7'):
                 str1 = str1 + '111'
             elif x[i] == 'FLAGS' or x[i] == 'R7':
-                errorName = errorName + 'Illegal use of FLAGS ( LINE ' + str(line) + ')'
+                errorName = 'Illegal use of FLAGS ( LINE ' + str(line) + ')'
                 error += 1
             else:
-                errorName = errorName + 'Typo in register name ( LINE ' + str(line) + ')'
+                errorName = 'Typo in register name ( LINE ' + str(line) + ')'
                 error += 1
-    outputList.append(str)
+    outputList.append(str1)
 
 
 def D(x, line):
@@ -132,15 +135,15 @@ def D(x, line):
     str1 = regcheck(x, str1, line, 1)
 
     if x[2] in labmems:
-        errorName = errorName + 'Label used instead of variable ( LINE ' + str(line) + ')'
+        errorName = 'Label used instead of variable ( LINE ' + str(line) + ')'
         error += 1
     if error == 0:
         if x[2] in varmems:
             str1 = str1 + format(varmems[x[2]], '08b')
         else:
-            errorName = errorName + 'Use of undefined variables ( LINE ' + str(line) + ')'
+            errorName = 'Use of undefined variables ( LINE ' + str(line) + ')'
             error += 1
-    outputList.append(str)
+    outputList.append(str1)
 
 
 def E(x, line):
@@ -160,15 +163,15 @@ def E(x, line):
         str1 = str1 + '10010000'
 
     if x[1] in varmems:
-        errorName = errorName + 'Variable used instead of label ( LINE ' + str(line) + ')'
+        errorName = 'Variable used instead of label ( LINE ' + str(line) + ')'
         error += 1
     if error == 0:
         if x[1] in labmems:
             str1 = str1 + format(labmems[x[1]], '08b')
         else:
-            errorName = errorName + 'Use of undefined labels ( LINE ' + str(line) + ')'
+            errorName = 'Use of undefined labels ( LINE ' + str(line) + ')'
             error += 1
-    outputList.append(str)
+    outputList.append(str1)
 
 
 error = 0
@@ -183,103 +186,138 @@ def main():
     global errorName
     global error
 
-    Input = open('input.txt', 'r')
-    mems = Input.readlines()
-    i = 0
+    complete_input = sys.stdin.read()
+    mems = (complete_input.split("\n"))
+    # file = open('Input.txt', 'r')
+    # mems = file.readlines()
+    pc = 0
+    emptylines = 0
     v = 0
     totallines = []
-    while True:
-        line = mems[i]
+
+    totalEmptylines = 0
+    for i in mems:
+        if len(i) == 0:
+            totalEmptylines += 1
+
+    while pc < len(mems):
+
+        line = mems[pc]
+        pc += 1
         totallines.append(line)
-        i += 1
-        x = line.split()
-        if ('hlt' in x) and i != len(mems):
-            errorName = errorName + 'Illegal use of hlt ( LINE ' + str(i) + ')'
-            error += 1
-        elif i == len(mems) and x[0] == 'hlt':
-            break
-        elif i == len(mems) and x[0] != 'hlt':
-            errorName = errorName + 'hlt absent'
-            error += 1
+        lineWithoutLabel = 'lineWithoutLabel'
+        if len(line) > 1:
+            x = line.split()
 
-        if x[0] == 'var':
-            v += 1
+            if x[0][len(x[0]) - 1] == ':':
+                temp = x[0][0:len(x[0]) - 1]
+                labmems[temp] = pc - emptylines - v - 1
+                totallines.remove(line)
+                tempcount = 0
+                for ch in line:
+                    tempcount += 1
+                    if ch == ' ':
+                        break
+                lineWithoutLabel = line[tempcount:len(line)]
+                totallines.append(lineWithoutLabel)
+                x = lineWithoutLabel.split()
+                if len(lineWithoutLabel) == 0:
+                    totalEmptylines += 1
+                    emptylines += 1
 
-        elif x[0][len(x[0])-1] == ':':
-            temp = x[0][0:len(x[0]) - 1]
-            labmems[temp] = i - v - 1
-            totallines.remove(line)
-            tempcount = 0
-            for ch in line:
-                tempcount += 1
-                if ch == ' ':
+            if len(lineWithoutLabel) > 1:
+                if ('hlt' in x) and pc != len(mems) - (totalEmptylines - emptylines):
+                    errorName = 'Illegal use of hlt ( LINE ' + str(pc) + ')'
+                    error += 1
+                elif (pc == len(mems) - (totalEmptylines - emptylines)) and x[0] == 'hlt':
                     break
-            totallines.append(line[tempcount:len(line)])
-    j = 0
-    for k in totallines:
-        i = k.split()
-        if i[0] == 'var':
-            varmems[i[1]] = len(totallines) - v + j
-            j += 1
-    checkwhich(totallines)
-    Input.close()
+                elif (pc == len(mems) - (totalEmptylines - emptylines)) and x[0] != 'hlt':
+                    errorName = 'hlt absent'
+                    error += 1
+                if x[0] == 'var':
+                    if (pc - v - emptylines) == 1:
+                        v += 1
+                    else:
+                        error += 1
+                        errorName = 'VAR not initialized at start of instructions ( Line ' + str(pc) + ')'
+        else:
+            emptylines += 1
+
+        j = 0
+        for k in totallines:
+            if len(k) > 4:
+                i = k.split()
+                if i[0] == 'var':
+                    varmems[i[1]] = len(totallines) - v + j - emptylines + 1
+                    j += 1
+    checkwhich(totallines, emptylines)
+    # file.close()
 
 
-def checkwhich(list1):
+def checkwhich(list1, emptylines):
     global error
     global errorName
     global outputList
-    outputTxt = open('binaryCompilation.txt', 'a')
-    templine = 0
+    # outputTxt = open('binaryCompilation.txt', 'w')
+    templine = emptylines
     if error == 0:
         for y in list1:
-            if error == 0:
-                templine += 1
-                x = y.split()
-                if x[0] == 'var':
-                    continue
-                if x[0] == 'add' or x[0] == 'sub' or x[0] == 'mul' or x[0] == 'xor' or x[0] == 'or' or x[0] == 'and':
-                    if len(x) == 4:
-                        A(x, templine)
-                    else:
-                        errorName = errorName + 'Syntax error for Type A'
-                        error += 1
-                elif (x[0] == 'mov' and x[2][0] != 'R') or x[0] == 'rs' or x[0] == 'ls':
-                    if len(x) == 3:
-                        B(x, templine)
-                    else:
-                        errorName = errorName + 'Syntax error for Type B'
-                        error += 1
-                elif x[0] == 'mov' or x[0] == 'div' or x[0] == 'not' or x[0] == 'cmp':
-                    if len(x) == 3:
-                        C(x, templine)
-                    else:
-                        errorName = errorName + 'Syntax error for Type C'
-                        error += 1
-                elif x[0] == 'ld' or x[0] == 'st':
-                    if len(x) == 3:
-                        D(x, templine)
-                    else:
-                        errorName = errorName + 'Syntax error for Type D'
-                        error += 1
-                elif x[0] == 'jmp' or x[0] == 'jlt' or x[0] == 'jgt' or x[0] == 'je':
-                    if len(x) == 2:
-                        E(x, templine)
-                    else:
-                        errorName = errorName + 'Syntax error for Type E'
-                        error += 1
-                elif x[0] == 'hlt':
-                    outputList.append('1001100000000000')
-                else:
-                    outputList.append('Typo in instruction name ( LINE ' + str(templine) + ')')
-                    error += 1
+            if len(y) <= 1:
+                continue
             else:
-                break
+                if error == 0:
+                    templine += 1
+                    x = y.split()
+                    if x[0] == 'var':
+                        continue
+                    if x[0] == 'add' or x[0] == 'sub' or x[0] == 'mul' or x[0] == 'xor' or x[0] == 'or' or x[
+                        0] == 'and':
+                        if len(x) == 4:
+                            A(x, templine)
+                        else:
+                            errorName = 'Syntax error for Type A ( Line ' + str(templine) + ')'
+                            error += 1
+                    elif (x[0] == 'mov' and (len(x) < 3 or (x[2][0] != 'R' and x[2][0] != 'F'))) or x[0] == 'rs' or x[
+                        0] == 'ls':
+                        if len(x) == 3:
+                            B(x, templine)
+                        else:
+                            errorName = 'Syntax error for Type B ( Line ' + str(templine) + ')'
+                            error += 1
+                    elif x[0] == 'mov' or x[0] == 'div' or x[0] == 'not' or x[0] == 'cmp':
+                        if len(x) == 3:
+                            C(x, templine)
+                        else:
+                            errorName = 'Syntax error for Type C ( Line ' + str(templine) + ')'
+                            error += 1
+                    elif x[0] == 'ld' or x[0] == 'st':
+                        if len(x) == 3:
+                            D(x, templine)
+                        else:
+                            errorName = 'Syntax error for Type D ( Line ' + str(templine) + ')'
+                            error += 1
+                    elif x[0] == 'jmp' or x[0] == 'jlt' or x[0] == 'jgt' or x[0] == 'je':
+                        if len(x) == 2:
+                            E(x, templine)
+                        else:
+                            errorName = 'Syntax error for Type E ( Line ' + str(templine) + ')'
+                            error += 1
+                    elif x[0] == 'hlt':
+                        outputList.append('1001100000000000')
+                    else:
+                        errorName = 'Typo in instruction name ( LINE ' + str(templine) + ')'
+                        outputList.append(errorName)
+                        error += 1
+                else:
+                    break
     if error == 0:
         for i in outputList:
-            outputTxt.write(i)
+            print(i)
+            # outputTxt.write(str(i) + "\n")
     else:
-        outputTxt.write(errorName)
-    outputTxt.close()
-    #hoelelee
-    #ch
+        print(errorName)
+        # outputTxt.write(errorName)
+    # outputTxt.close()
+
+
+main()
