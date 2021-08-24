@@ -14,7 +14,15 @@ class ExecuteEngine:
         Legend.setRegister("111", flag)
 
     @staticmethod
+    def flagReset():
+        flag = Legend.getRegister("111")
+        flag = flag[:12] + "0000"
+
+        Legend.setRegister("111", flag)
+
+    @staticmethod
     def Ex_typeA(ins):
+        ExecuteEngine.flagReset()
 
         r = ins[7:10]
         b = int(Legend.getRegister(ins[10:13]))
@@ -45,6 +53,8 @@ class ExecuteEngine:
 
     @staticmethod
     def Ex_typeB(ins):
+        ExecuteEngine.flagReset()
+
         r = ins[5:8]
         b = int(Legend.getRegister(ins[8:16]))
 
@@ -58,6 +68,8 @@ class ExecuteEngine:
 
     @staticmethod
     def Ex_typeC(ins):
+        ExecuteEngine.flagReset()
+
         r = ins[10:13]
         r_1 = Legend.getRegister(r)
         r_2 = Legend.getRegister(ins[13:16])
@@ -97,6 +109,7 @@ class ExecuteEngine:
 
     @staticmethod
     def Ex_typeD(ins, pc, mem_dump):
+        ExecuteEngine.flagReset()
 
         r = ins[5:8]
         op = Legend.getOp(ins[:5])
@@ -125,6 +138,7 @@ class ExecuteEngine:
         mem_adr = ins[8:16]
 
         if op == "jmp":
+            ExecuteEngine.flagReset()
             pc = int(mem_adr)
             return pc
 
