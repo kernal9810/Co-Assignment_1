@@ -96,21 +96,20 @@ class ExecuteEngine:
             Legend.setRegister("111", flag)
 
     @staticmethod
-    def Ex_typeD(ins, pc):
+    def Ex_typeD(ins, pc, mem_dump):
 
         r = ins[5:8]
         op = Legend.getOp(ins[:5])
         address = int(ins[8:])
 
         if op == "st":
-            file = open("../TextFiles/BinaryCompilation.txt", "a")
-            r = Legend.getRegister(ins[5:8])
-
+            r_value = Legend.getRegister(ins[5:8])
+            mem_dump[address] = format(int(r_value), "16b")
 
         if op == "ld":
-            file = open("../TextFiles/BinaryCompilation.txt", "r")
-            mem = file.readlines()
-            Legend.setRegister(r, mem[address])
+            Legend.setRegister(r, mem_dump[address])
+
+        return mem_dump
 
 
     @staticmethod

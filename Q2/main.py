@@ -2,31 +2,37 @@ import sys
 
 from .BinAsmLegend import Legend
 from ExecuteEngine import ExecuteEngine
-Input = open("../TextFiles/Input.txt", "r")
 
-OutputTxt = open("../TextFiles/Output.txt", "a")
 
+mem_dump = ["0"*16]*256
 
 def main():
 
+    global mem_dump
     halt = False
     pc = 0
-    Mem = Input.readlines()
+    complete_input = sys.stdin.read()
+    Mem = (complete_input.split("\n"))
+
+    for i in range(Mem):
+        mem_dump[i] = Mem[i]
 
     while not halt:
         line = Mem[pc]
 
         halt, new_pc = executeLine(line, pc)
 
-        OutputTxt.write(format(pc, "08b") + " " + Legend.registers["000"] + Legend.registers["001"] + Legend.registers["010"] +
+        print(format(pc, "08b") + " " + Legend.registers["000"] + Legend.registers["001"] + Legend.registers["010"] +
                Legend.registers["011"] + Legend.registers["100"] + Legend.registers["101"] + Legend.registers["110"] +
                Legend.registers["111"] + "\n")
 
         pc = new_pc
 
-
+    for i in mem_dump:
+        print(i)
 
 def executeLine(ins, pc):
+    global mem_dump
 
     halt = False
     pc += 1
@@ -41,7 +47,8 @@ def executeLine(ins, pc):
         ExecuteEngine.Ex_typeC(ins)
         pc += 1
     elif type == "D":
-        pc = ExecuteEngine.Ex_typeD(ins, pc)
+        mem_dump = ExecuteEngine.Ex_typeD(ins, pc, mem_dump)
+        pc += 1
     elif type == "E":
         pc = ExecuteEngine.Ex_typeE(ins, pc)
     elif type == "F":
