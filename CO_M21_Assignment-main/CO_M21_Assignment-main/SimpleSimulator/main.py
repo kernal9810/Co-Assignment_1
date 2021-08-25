@@ -1,6 +1,6 @@
 import sys
-
-
+import matplotlib
+from matplotlib import pyplot as plt
 
 mem_dump = ["0"*16]*256
 
@@ -29,11 +29,13 @@ def main():
     for i in mem_dump:
         print(i)
 
+list= []
 def executeLine(ins, pc):
     global mem_dump
 
     halt = False
 
+    list.append(pc)
     type = Legend.getType(ins[:5])
 
     if type == "A":
@@ -295,4 +297,9 @@ class Legend:
     def getOp(s):
         return Legend.function[s][0]
 
+
 main()
+
+x=range(1,len(list)+1)
+plt.scatter(x,list)
+plt.show()
