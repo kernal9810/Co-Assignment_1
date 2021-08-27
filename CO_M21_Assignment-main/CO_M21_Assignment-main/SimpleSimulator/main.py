@@ -62,14 +62,16 @@ def executeLine(ins, pc):
 class ExecuteEngine:
 
     @staticmethod
-    def checkOverflow(x):
+    def checkOverflow(r_value):
         flag = Legend.getRegister("111")
-        if x > 65535:
+        if len(r_value) > 16:
+            r_value = r_value[len(r_value) - 16:]
             flag = flag[:12] + "1" + flag[13:16]
         else:
             flag = flag[:12] + "0" + flag[13:16]
 
         Legend.setRegister("111", flag)
+        return r_value
 
     @staticmethod
     def flagReset():
@@ -90,15 +92,15 @@ class ExecuteEngine:
 
         if op == "mul":
             Legend.setRegister(r, "0"*8 + format(int(b * c), "08b"))
-            ExecuteEngine.checkOverflow(b * c)
+            Legend.setRegister(r,ExecuteEngine.checkOverflow(Legend.getRegister(r)))
 
         elif op == "add":
             Legend.setRegister(r, "0"*8 + format(int(b + c), "08b"))
-            ExecuteEngine.checkOverflow(b + c)
+            Legend.setRegister(r,ExecuteEngine.checkOverflow(Legend.getRegister(r)))
 
         elif op == "sub":
             Legend.setRegister(r, "0"*8 + format(int(b - c), "08b"))
-            ExecuteEngine.checkOverflow(b - c)
+            Legend.setRegister(r,ExecuteEngine.checkOverflow(Legend.getRegister(r)))
 
         elif op == "xor":
             Legend.setRegister(r, "0"*8 + format(int(b ^ c), "08b"))
