@@ -129,7 +129,6 @@ class ExecuteEngine:
 
     @staticmethod
     def Ex_typeC(ins):
-        
 
         r = ins[10:13]
         r_1 = int(Legend.getRegister(r),2)
@@ -145,11 +144,11 @@ class ExecuteEngine:
 
         elif op == "div":
             ExecuteEngine.flagReset()
-            q = int(int(r_1,2) / b)
-            rem = int(r_1,2) % b
+            q = "0"*8 + format(int(r_1 / b), "08b")
+            rem = "0"*8 + format(int(r_1 % b), "08b")
 
-            Legend.setRegister("000", "0"*8 + format(int(q), "08b"))
-            Legend.setRegister("001", "0"*8  + format(int(rem), "08b"))
+            Legend.setRegister("000", q)
+            Legend.setRegister("001", rem)
 
         elif op == "inv":
             ExecuteEngine.flagReset()
