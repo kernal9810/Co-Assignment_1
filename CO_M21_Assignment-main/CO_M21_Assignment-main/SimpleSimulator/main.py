@@ -133,6 +133,7 @@ class ExecuteEngine:
         r = ins[10:13]
         r_1 = int(Legend.getRegister(r),2)
         r_2 = Legend.getRegister(ins[13:16])
+        r_string = Legend.getRegister(r)
 
         b = int(r_2,2)
 
@@ -152,7 +153,14 @@ class ExecuteEngine:
 
         elif op == "inv":
             ExecuteEngine.flagReset()
-            Legend.setRegister(r, "0"*8 + format(int(~b), "08b"))
+            invert = ""
+            for i in r_string:
+                if i == "1":
+                    invert += "0"
+                else:
+                    invert += "1"
+
+            Legend.setRegister(r, invert)
 
         elif op == "cmp":
             ExecuteEngine.flagReset()
@@ -186,9 +194,8 @@ class ExecuteEngine:
         
 
         if op == "ld":
-
-            Legend.setRegister(r, "0"*8 + format(mem_dump[address],"08b"))
-            print("0"*8 + format(mem_dump[address],"08b"))
+            Legend.setRegister(r, "0"*8 + format(int(mem_dump[address],2), "08b"))
+            # print("0"*8 + format(mem_dump[address],"08b"))
 
         return mem_dump
 
