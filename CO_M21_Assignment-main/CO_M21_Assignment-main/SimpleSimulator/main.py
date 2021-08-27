@@ -115,6 +115,7 @@ class ExecuteEngine:
         ExecuteEngine.flagReset()
 
         r = ins[5:8]
+        r_val = int(Legend.getRegister(r), 2)
         b = int((ins[8:16]),2)
 
         op = Legend.getOp(ins[:5])
@@ -122,9 +123,9 @@ class ExecuteEngine:
             Legend.setRegister(r, "0"*8 + format(int(b), "08b"))
 
         elif op == "Lshift":
-            Legend.setRegister(r, "0"*8 + format(int(b << 1), "08b"))
+            Legend.setRegister(r, "0"*8 + format(int(r_val << b), "08b"))
         elif op == "Rshift":
-            Legend.setRegister(r, "0"*8 + format(int(b >> 1), "08b"))
+            Legend.setRegister(r, "0"*8 + format(int(r_val >> b), "08b"))
 
     @staticmethod
     def Ex_typeC(ins):
