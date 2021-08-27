@@ -133,7 +133,7 @@ class ExecuteEngine:
         r = ins[10:13]
         r_1 = int(Legend.getRegister(r),2)
         r_2 = Legend.getRegister(ins[13:16])
-        r_string = Legend.getRegister(r)
+
 
         b = int(r_2,2)
 
@@ -151,15 +151,14 @@ class ExecuteEngine:
             Legend.setRegister("000", q)
             Legend.setRegister("001", rem)
 
-        elif op == "inv":
+        elif op == "not":
             ExecuteEngine.flagReset()
             invert = ""
-            for i in r_string:
+            for i in r_2:
                 if i == "1":
                     invert += "0"
                 else:
                     invert += "1"
-
             Legend.setRegister(r, invert)
 
         elif op == "cmp":
